@@ -1,0 +1,61 @@
+name: Build Android APK
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+
+      - name: Set up Android SDK
+        uses: android-actions/setup-android@v3
+
+      - name: Grant execute permission for gradlew
+        run: chmod +x gradlew
+
+      - name: Build debug APK
+        run: ./gradlew assembleDebug
+
+      - name: Upload APK as artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: troll-app-debug
+          path: app/build/outputs/apk/debug/app-debug.apk
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: v1.0.${{ github.run_number }}
+          name: Troll App v1.0.${{ github.run_number }}
+          body: |
+            ## Troll App – Automatikus build
+
+            Ez a kiadás automatikusan jött létre a GitHub Actions által.
+
+            ### Telepítés
+            1. Töltsd le az `app-debug.apk` fájlt
+            2. Engedélyezd az ismeretlen forrásból való telepítést a telefonon
+            3. Telepítsd az APK-t
+            4. Indítsd el az appot, nyomd meg a **Start** gombot
+
+            ### Mi csinálja az app?
+            - Véletlenszerű appokat nyit meg 11 másodpercenként
+            - A **Stop** gombbal leállítható
+          files: app/build/outputs/apk/debug/app-debug.apk
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
