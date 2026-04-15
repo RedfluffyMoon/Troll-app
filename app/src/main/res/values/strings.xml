@@ -1,0 +1,8 @@
+<resources>
+    <string name="app_name">Troll App</string>
+    <string name="subtitle">Opens random apps every 11 seconds 😏</string>
+    <string name="btn_start">▶ START</string>
+    <string name="btn_stop">⏹ STOP</string>
+    <string name="troll_started">Troll mode activated! 😈</string>
+    <string name="troll_stopped">Troll mode stopped. 😇</string>
+</resources>
